@@ -1,0 +1,38 @@
+{
+    "courses": {
+        "course_1": {
+            "title": "NodeJs, Express, MongoDB Dev to Deployment",
+            "section_1-1": {
+                "title": "Course Introduction",
+                "chapter_1-1-1": {
+                    "title": "Welcome to the Course",
+                    "type": "video"
+                },
+                "chapter_1-1-2": {
+                    "title": "Project Files & Questions",
+                    "type": "article"
+                }
+            }
+        }
+    },
+
+
+    "chapters": {
+        "1-1-1": {
+            "note_1-1-1-1": {
+                "title": "Note Title",
+                "body": {
+                    "snippet_1-1-1-1-1": {
+                        "content": "Some text content"
+                    }
+                },
+                "tags": [],
+                "technologies": []
+            }
+        }
+    }
+
+}
+
+
+
