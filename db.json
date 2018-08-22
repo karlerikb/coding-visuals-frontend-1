@@ -12,11 +12,24 @@
                     "title": "Project Files & Questions",
                     "type": "article"
                 }
+            },
+            "section_1-2": {
+                "title": "Setting Up",
+                "chapter_1-2-3": {
+                    "title": "Dev Environment Setup",
+                    "type": "video"
+                },
+                "chapter_1-2-4": {
+                    "title": "What Exactly is Node.js?",
+                    "type": "video"
+                },
+                "chapter_1-2-5": {
+                    "title": "test chapter title",
+                    "type": "video"
+                }
             }
         }
     },
-
-
     "chapters": {
         "1-1-1": {
             "note_1-1-1-1": {
@@ -31,7 +44,6 @@
             }
         }
     }
-
 }
 
 
