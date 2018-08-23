@@ -111,7 +111,6 @@ const page = {
             createDividerContent: function() {
                 // Creating icons for the section heading divider
                 page.course.sections.createDividerIcon();
-                page.course.sections.createDividerText();
             },
             createDividerIcon: function() {
                 // Selecting section dividers
@@ -122,18 +121,6 @@ const page = {
                     const dividerIcon = document.createElement("i");
                     divider.appendChild(dividerIcon);
                     dividerIcon.classList.add("circle", "outline", "icon");
-                });
-            },
-            createDividerText: function() {
-                // Selecting section dividers
-                const sectionDividers = document.querySelectorAll("section > .section-header > .divider");
-                //console.log(sectionDividers);
-                
-                // Creating text for section dividers
-                sectionDividers.forEach(divider => {
-                    const dividerText = document.createElement("span");
-                    divider.appendChild(dividerText);
-                    dividerText.classList.add("section-divider-text");
                 });
             },
             createTitle: function() {
@@ -156,6 +143,51 @@ const page = {
                     const sectionBodyContainer = document.createElement("div");
                     section.appendChild(sectionBodyContainer);
                     sectionBodyContainer.classList.add("ui", "container", "margin-top-small", "margin-bottom-small", "section-body");
+                });
+            },
+            setTitles: function() {
+                this.setDividerTitle();
+                this.setSectionTitle();
+            },
+            setDividerTitle: function() {
+                // Selecting all sections
+                const sections = document.querySelectorAll(".section");
+
+                // Creating text node as the section divider title
+                sections.forEach(section => {
+                    // Using the id attribute to get the number for each section
+                    const currentSection = section.getAttribute("id").split("_")[1].split("-")[1];
+                    //console.log(currentSection);
+
+                    // Creating the text node
+                    const sectionDividerTitleContainer = section.children[0].children[0];
+                    const sectionDividerTitleText = document.createTextNode("Section " + currentSection);
+                    sectionDividerTitleContainer.appendChild(sectionDividerTitleText);
+
+                    //console.log(section.children[0].children[0]);
+                });
+            },
+            setSectionTitle: function() {
+                // Selecting all sections
+                const sections = document.querySelectorAll(".section");
+
+                // Setting the section title
+                sections.forEach(section => {
+                    // Getting current course and section ids
+                    const currentCourse = page.course.utility.getCourseId();
+                    const currentSection = section.getAttribute("id");
+
+                    //console.log(currentSection);
+                    //console.log(section.children[0].children[1]);
+
+                    // Getting the current section title
+                    const currentSectionTitle = coursesObj[currentCourse][currentSection].title;
+                    //console.log(coursesObj[currentCourse][currentSection]);
+
+                    // Creating the text node for the section title
+                    const sectionTitleContainer = section.children[0].children[1];
+                    const sectionTitleText = document.createTextNode(currentSectionTitle);
+                    sectionTitleContainer.appendChild(sectionTitleText);
                 });
             }
         },
@@ -282,6 +314,74 @@ const page = {
                     container.appendChild(subTitle);
                     subTitle.classList.add("description");
                 });
+            },
+            setTitles: function() {
+                this.setChapterMainTitle();
+                this.setChapterSubTitle();
+            },
+            setChapterMainTitle: function() {
+                // Selecting all chapter list items
+                const chapterListItems = document.querySelectorAll(".chapter-list-item");
+                //console.log(chapterListItems);
+
+                // Creating chapter main title
+                chapterListItems.forEach(item => {
+                    // Getting the current chapter number
+                    const currentChapter = item.getAttribute("id").split("_")[1].split("-")[2];
+                    //console.log(currentChapter);
+
+                    // Creating the text node for main title
+                    const mainTitleContainer = item.children[1].children[0];
+                    //console.log(mainTitleContainer);
+                    const mainTitleText = document.createTextNode("Chapter " + currentChapter);
+                    mainTitleContainer.appendChild(mainTitleText);
+                });
+            },
+            setChapterSubTitle: function() {
+                //
+                //const sections = document.querySelectorAll(".section");
+                
+                const chapterListItems = document.querySelectorAll(".chapter-list-item");
+                //console.log(chapterListItems);
+
+                chapterListItems.forEach(item => {
+                    //console.log(item);
+                    const currentChapter = item.getAttribute("id");
+                    //console.log(currentChapter);
+
+                    const chapterSubTitle = this.getChapterSubTitles(currentChapter);
+
+                    const chapterSubTitleContainer = item.children[1].children[1];
+                    //console.log(chapterSubTitleContainer);
+                    const chapterSubTitleText = document.createTextNode(chapterSubTitle);
+                    chapterSubTitleContainer.appendChild(chapterSubTitleText);
+                });
+
+                //
+                /* sections.forEach(section => {
+                    const chapterListItems = section.children[1].children[0].children;
+                    console.log(chapterListItems);
+
+                    for (let i = 0; i < chapterListItems.length; i++) {
+                        console.log(chapterListItems[i].getAttribute("id"));
+                    }
+
+                }); */
+            },
+            getChapterSubTitles: function(currentChapter) {
+                // Getting the course id for the db object
+                const currentCourse = page.course.utility.getCourseId();
+                //console.log(currentCourse);
+                //console.log(currentChapter);
+
+                // Getting the section id for the db object
+                const currentSectionArray = currentChapter.split("_")[1].split("-");
+                //console.log(currentSectionArray);
+                const currentSection = `section_${currentSectionArray[0]}-${currentSectionArray[1]}`;
+                //console.log(currentSection);
+
+                // Returning the chapter titles
+                return coursesObj[currentCourse][currentSection][currentChapter].title;
             }
         },
         "utility": {
@@ -324,4 +424,8 @@ page.course.sections.createElement();
 // Creating chapter lists
 page.course.chapters.create();
 
-console.log(coursesObj["course_1"]["section_1-1"].title);
+// Setting section titles
+page.course.sections.setTitles();
+
+// Setting chapter titles
+page.course.chapters.setTitles();

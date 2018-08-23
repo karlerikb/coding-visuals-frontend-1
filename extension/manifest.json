@@ -1,0 +1,20 @@
+{
+    "name": "coding visual extension",
+    "description": "gets course section and chapter structure",
+    "version": "0.1",
+    "permissions": [
+        "activeTab",
+        "tabs",
+        "http://*/*",
+        "https://*/*"
+    ],
+    "content_scripts" : [{
+        "matches" : ["https://www.udemy.com/*"],
+        "js" : ["config.js","firebase.js","extension.js"],
+        "css" : ["style.css"]
+    }],
+    "browser_action": {
+        "default_title": "Get course structure"
+    },
+    "manifest_version": 2
+}
