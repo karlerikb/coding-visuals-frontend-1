@@ -19,7 +19,7 @@
     z-index: 4000;
 }
 
-.titleSelectorCopyTextarea {
+.titleSelectorCopyTextarea, .chaptersSelectorCopyTextarea {
     width: 100%;
 }
 
@@ -33,10 +33,13 @@
     display: inline-block;
 }
 
-.menuContainer, .titleSectionContainer {
+.menuContainer, .titleSectionContainer, .chaptersSectionContainer {
     margin-bottom: 10px;
 }
 
-.titleSectionContainer div {
+.titleSectionContainer div, .chaptersSectionContainer div {
     margin-bottom: 5px;
 }
+
+.inDb { background-color: lightgreen; }
+.notInDb { background-color: lightcoral; }
