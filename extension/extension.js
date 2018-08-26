@@ -276,7 +276,9 @@ const extension = {
             const chaptersSelectorCopyTextareaBtn = document.querySelector("#chaptersSelectorCopyTextareaBtn");
             chaptersSelectorCopyTextareaBtn.addEventListener("click", parseHTML);
             
-            let currentCourse = extension.database.getCurrentCourse();
+            //if (JSON.parse(localStorage.getItem("dbObj")) !== null) {
+                const currentCourse = extension.database.getCurrentCourse();
+            //}
             
             function parseHTML() {
                 //const submitToDbBtn = document.querySelector("#submitToDbBtn");
@@ -284,24 +286,26 @@ const extension = {
                 const dummyElement = document.querySelector(".dummyElement");
                 dummyElement.innerHTML = input;
                 let tabList = document.querySelectorAll(".dummyElement div[role=tab]");
+                let largestSectionNumber = tabList.length;
+                console.log(largestSectionNumber);
                 
                 tabList.forEach(item => {
                     let sectionNum = item.children[0].innerText.split(" ")[1];
                     let sectionTitle = item.children[2].innerText;
                     
-                    extension.database.addCourseSection(currentCourse, sectionNum, sectionTitle);
-                    console.log(`${sectionNum} || ${sectionTitle}`);
-                    console.log("");
+                    extension.database.addCourseSection(currentCourse, sectionNum, sectionTitle, largestSectionNumber);
+                    //console.log(`${sectionNum} || ${sectionTitle}`);
                 });
                 
                 // This is the section list (each element is a section and contains a grouping of chapters)
                 let sectionList = document.querySelectorAll(".dummyElement .panel-body > ul");
                 let sectionNumber = 0;
-                
+                let largestChapterNumber = document.querySelectorAll(".dummyElement li[class^=curriculum-item--curriculum-item]").length;
+                console.log(largestChapterNumber);
+
                 sectionList.forEach(section => {
                     let sectionItems = section.children;
                     sectionNumber++;
-                    console.log(sectionNumber);
                     
                     for (let i = 0; i < sectionItems.length; i++) {
                         let chapterType = sectionItems[i].children[0].children[0].children[0].getAttribute("class").split("-")[1];
@@ -316,11 +320,9 @@ const extension = {
                         let chapterNumber = chapterTitleTextArray[0].split(".")[0];
                         let chapterTitle = chapterTitleTextArray[2];
                         let chapterDuration = sectionItems[i].children[0].children[2].innerText;
-                        extension.database.addCourseChapter(currentCourse, sectionNumber, chapterNumber, chapterTitle, chapterType, chapterDuration);
-                        console.log(`${chapterNumber} || ${chapterTitle} || ${chapterType} || ${chapterDuration}`);
+                        extension.database.addCourseChapter(currentCourse, sectionNumber, chapterNumber, chapterTitle, chapterType, chapterDuration, largestSectionNumber, largestChapterNumber);
+                        //console.log(`${chapterNumber} || ${chapterTitle} || ${chapterType} || ${chapterDuration}`);
                     }
-                    console.log("----- |||||| -----")
-                    console.log("");
                 });
                 
                 chaptersSelectorCopyTextareaBtn.innerText = "Parsed!";
@@ -358,6 +360,7 @@ const extension = {
             const database = firebase.database().ref("courses");
             database.once("value").then(snapshot => {
                 const coursesObj = snapshot.val();
+                console.log(coursesObj);
                 if (coursesObj === null) {
                     this.submitTitle(title, href, "course_1");
                 } else {
@@ -372,20 +375,24 @@ const extension = {
         },
         generateCourseNum: function(coursesObj, href) {
             const coursesArray = Object.keys(coursesObj);
+            console.log(coursesArray);
             let validationArray = [true];
             coursesArray.forEach(course => {
                 if (coursesObj[course].id === href) {
                     console.log("course already exists");
                     validationArray[0] = false;
                     validationArray.push(course);
+                    console.log(validationArray);
                 }
             });
+            console.log(validationArray);
             if (validationArray[0]) {
-                validationArray.push("course_" + (validationArray.length + 1));
-                // console.log("valid - new course");
+                console.log(coursesArray.length + 1);
+                validationArray.push("course_" + (coursesArray.length + 1));
+                console.log("valid - new course");
                 return validationArray;
             } else {
-                // console.log("not valid - no new course");
+                console.log("not valid - no new course");
                 return validationArray;
             }
         },
@@ -424,44 +431,60 @@ const extension = {
         getCurrentCourse: function() {
             let href = window.location.pathname.split("/")[1];
             let dbObj = localStorage.getItem("dbObj");
-            console.log(dbObj);
             let coursesObj = JSON.parse(dbObj);
-            console.log(coursesObj);
             let coursesArray = Object.keys(coursesObj);
-            console.log(coursesArray);
             let currentCourse = [];
             coursesArray.forEach(course => {
-                console.log("inside foreach");
-                console.log(coursesObj);
-                console.log(course);
-                console.log(coursesObj[course].id);
                 if (coursesObj[course].id === href) {
                     currentCourse.push(course);
                 }
             });
-            console.log(currentCourse);
-            console.log(currentCourse[0]);
             return currentCourse[0];
         },
-        addCourseSection: function(course, num, title) {
+        addCourseSection: function(course, num, title, largestSectionNumber) {
+            let leadingZeros = this.getLeadingZeros(largestSectionNumber, num);
+
             let courseNum = course.split("_")[1];
-            let section = `section_${courseNum}-${num}`;
+            let section = `section_${courseNum}-${leadingZeros}${num}`;
+            console.log(section);
             firebase.database().ref(`courses/${course}/${section}`).set({
+                sectionNum: num,
                 title: title,
             });
         },
-        addCourseChapter: function(course, sectionNum, chapterNum, title, type, duration) {
+        addCourseChapter: function(course, sectionNum, chapterNum, title, type, duration, largestSectionNumber, largestChapterNumber) {
+            let leadingZerosSection = this.getLeadingZeros(largestSectionNumber, sectionNum);
+            let leadingZerosChapter = this.getLeadingZeros(largestChapterNumber, chapterNum);
+
             let courseNum = course.split("_")[1];
-            let section = `section_${courseNum}-${sectionNum}`;
-            let chapter = `chapter_${courseNum}-${sectionNum}-${chapterNum}`;
+            let section = `section_${courseNum}-${leadingZerosSection}${sectionNum}`;
+            let chapter = `chapter_${courseNum}-${leadingZerosSection}${sectionNum}-${leadingZerosChapter}${chapterNum}`;
             if (type === "play") {
                 type = "video";
             }
             firebase.database().ref(`courses/${course}/${section}/${chapter}`).set({
+                chapterNum: chapterNum,
                 title: title,
                 type: type,
                 duration: duration
             });
+        },
+        getLeadingZeros: function(largestNum, currentNum) {
+            let maximumNumLength = largestNum.toString().length;
+            console.log(maximumNumLength);
+            let currentNumLength = currentNum.toString().length;
+            let leadingZerosAmount = maximumNumLength - currentNumLength;
+            let leadingZeros = "";
+            if (leadingZerosAmount === 3) {
+                leadingZeros = "000"
+            }
+            if (leadingZerosAmount === 2) {
+                leadingZeros = "00"
+            }
+            if (leadingZerosAmount === 1) {
+                leadingZeros = "0"
+            }
+            return leadingZeros;
         }
     }
 }

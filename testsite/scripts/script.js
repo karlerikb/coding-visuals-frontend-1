@@ -71,6 +71,16 @@ const page = {
                     let sectionElement = document.createElement("section");
                     mainElement.appendChild(sectionElement);
                     sectionElement.classList.add("section");
+
+                    /* // Get first part of sectionId
+                    let sectionId = courseSections[i].split("-")[0];
+                    console.log(sectionId);
+
+                    // Get second part of sectionId
+                    let sectionNumber = coursesObj[currentCourse][courseSections[i]].sectionNum;
+                    console.log(sectionNumber); */
+
+                    
                     sectionElement.setAttribute("id", courseSections[i]);
                 }
                 // Creating section heading container

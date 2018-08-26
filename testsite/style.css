@@ -16,3 +16,11 @@
 .note {
     margin-bottom: 5rem;
 }
+
+.inline-block {
+    display: inline-block !important;
+}
+
+.html5.icon { color: #e34f26; }
+.css3.icon { color: #3269E8; }
+.js.icon { color: #f7df1e; }
