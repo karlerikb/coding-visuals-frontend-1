@@ -1,2 +1,17 @@
 console.log("chapter");
-document.querySelector(".notes").innerText = "test"
+
+const notes = {
+    "structure": {
+        createStructure: function() {
+            console.log("init");
+            const notesSection = document.querySelector(".notes");
+
+            const newNoteBtn = document.createElement("div");
+        }
+    },
+    init: function() {
+        notes.structure.createStructure();
+    }
+}
+
+notes.init();

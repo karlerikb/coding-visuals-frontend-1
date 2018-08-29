@@ -713,7 +713,9 @@ ${tags.html.close}
         <div class="ui container center aligned margin-bottom-large">
             <h2>${chapterTitle}</h2>
         </div>
-        <section class='notes'></section>
+        <section class='notes'>
+            <div class='ui container'></div>
+        </section>
     </main>
 
     <script src='https://code.jquery.com/jquery-3.3.1.min.js' integrity='sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=' crossorigin='anonymous'></script>
