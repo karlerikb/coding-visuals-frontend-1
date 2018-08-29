@@ -714,7 +714,16 @@ ${tags.html.close}
             <h2>${chapterTitle}</h2>
         </div>
         <section class='notes'>
-            <div class='ui container'></div>
+            <div class='ui container'>
+                <div class="note-area"></div>
+
+                <div class="ui container center aligned note-controls">
+                    <button class="ui positive button">
+                        <i class="icon plus"></i>
+                        New Note
+                    </button>
+                </div>
+            </div>
         </section>
     </main>
 
