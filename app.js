@@ -71,7 +71,9 @@ app.listen(port, () => {
     
     structure.init();
     
-    
+    //const test = require("test");
+    //console.log(test);
+
     /*
     let courseContentsArray = Object.keys(dbObj.courses["course_1"]);
     console.log(courseContentsArray);
