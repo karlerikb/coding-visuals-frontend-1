@@ -15,7 +15,7 @@
             <p>Section 1: Course Introduction</p>
         </div>
     </header>
-
+    
     <nav>
         <div class="ui menu margin-bottom-large">
             <div class="header item">
@@ -32,7 +32,7 @@
             </a>
         </div>
     </nav>
-
+    
     <main>
         <div class="ui container center aligned margin-bottom-large">
             <h2>Welcome to the Course!</h2>
@@ -40,17 +40,83 @@
         <section class='notes'>
             <div class='ui container'>
                 <div class="note-area"></div>
+                
+                <div class="note-area-test">
+                    <div class="notes-list"></div>
 
-                <div class="ui container center aligned note-controls">
-                    <button class="ui positive button">
+                    <div class="ui container edit-mode display-none" id="edit-mode">
+                        <div class="ui top attached tertiary segment">
+                            <div class="ui stackable two column grid">
+                                <div class="column middle aligned">
+                                    <h3 class="ui header">
+                                        <div class="ui input fluid">
+                                            <input type="text" placeholder="Note Title" id="note-title">
+                                        </div>
+                                    </h3>
+                                    <div class="details">Edit Mode (Note: <span class="note-id"></span>)</div>
+                                </div>
+                                <div class="column right aligned">
+                                    <button class="ui icon button negative close-edit">
+                                        <i class="close icon"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui attached segment">
+                            
+                            <div class="inserted-snippets margin-bottom-small">
+                                
+                            </div>
+                            
+                            <div class="ui form">
+                                <div class="field snippet-input">
+                                    <label>Write a snippet</label>
+                                    <textarea class="ui field" id="snippet-textarea"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="snippet-controls margin-top-tiny margin-bottom-tiny">
+                                <button class="ui icon positive button insert-snippet">
+                                    <i class="plus icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ui bottom attached tertiary segment">
+                            <div class="ui stackable two column grid">
+                                <div class="column">
+                                    <div class="ui labels tags-container">
+                                        
+                                    </div>
+                                    <div class="ui right labeled left icon input">
+                                        <i class="tags icon"></i>
+                                        <input type="text" placeholder="Enter tags" id="tags-field">
+                                        <a class="ui tag label orange add-tag">
+                                            Add Tag
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="column right aligned">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ui container center aligned note-controls margin-top-medium margin-bottom-medium">
+                    <button class="ui positive loading disabled button new-note">
                         <i class="icon plus"></i>
                         New Note
+                    </button>
+                    <button class="ui basic positive button save-note display-none">
+                        <i class="icon upload"></i>
+                        Save Note
                     </button>
                 </div>
             </div>
         </section>
     </main>
-
+    
     <script src='https://code.jquery.com/jquery-3.3.1.min.js' integrity='sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=' crossorigin='anonymous'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.js' integrity='sha256-VQRL2nOqSBiLUuANrKpUCC2U6XUeJB41gbZHvknlLcE=' crossorigin='anonymous'></script>
     
@@ -59,4 +125,3 @@
     
     <script src='../../src/js/chapter.js'></script>
 </body>
-                            
