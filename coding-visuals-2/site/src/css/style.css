@@ -20,6 +20,7 @@
 .css3.icon { color: #3269E8; }
 .js.icon { color: #f7df1e; }
 .node.icon { color: #6cc24a; }
+.sass.icon { color: #c69; }
 
 
 .note {
@@ -28,4 +29,34 @@
 
 .courses-source {
     margin-bottom: 6rem;
+}
+
+.codify-text {
+    font-size: 1.5rem !important;
+    letter-spacing: 2px;
+    font-family: Courier, monospace !important;
+}
+
+#code-input-textarea {
+    background-color: #333;
+    color: #ddd;
+    font-size: 1rem;
+    font-family: Courier, monospace;
+    letter-spacing: 1px;
+}
+
+#code-input-textarea::selection {
+    background-color: #c6ddf1;
+}
+
+.code-input-controls {
+    text-align: center;
+}
+
+.code-button:hover i {
+    color: #333;
+}
+
+.html-oneline {
+    background-color: aquamarine;
 }

@@ -3,6 +3,15 @@ const database = firebase.database();
 
 let tempCurrentNote = [];
 let tempDb = {};
+let tempCode = {
+    inputElement: null,
+    //textBefore: null,
+    //textSelection: null,
+    //textAfter: null,
+    selectionStart: null,
+    selectionEnd: null,
+    text: null
+};
 
 const notes = {
     "structure": {
@@ -260,11 +269,21 @@ const notes = {
             });
         },
         editSnippet: function(e) {
-            
+            console.log("clicked to see snippet edit controls");
+
+            //console.log(e.target);
+
+            // Removing eventlistener for the highlighted snippet
+            const highlightedSnippet = e.target;
+            highlightedSnippet.removeEventListener("click", notes.eventListeners.editSnippet);
+
+            // Adding select snippet text eventlistener
+            //highlightedSnippet.addEventListener("mouseup", notes.eventListeners.getSelectedSnippetText);
+
             // Snippet elements
             const snippetSegmentOuter = e.target.parentElement.parentElement;
             const snippetSegmentInner = e.target.parentElement;
-            const snippetButtonsContainer = snippetSegmentInner.parentElement.children[1];
+            const snippetButtonsContainer = snippetSegmentInner.parentElement.children[2];
             
             // Making the snippet element "highlighted" when clicked upon
             snippetSegmentInner.classList.add("yellow");
@@ -279,9 +298,9 @@ const notes = {
             
             
             // Hiding the "move up" button for the first snippet
-            snippetsArray[0].children[1].children[4].classList.add("display-none");
+            snippetsArray[0].children[2].children[4].classList.add("display-none");
             // Hiding the "move down" button for the last snippet
-            snippetsArray[snippetsArray.length - 1].children[1].children[3].classList.add("display-none");
+            snippetsArray[snippetsArray.length - 1].children[2].children[3].classList.add("display-none");
             
             //console.log(snippetsArray[snippetsArray.length - 1].children[1].children[3]);
             
@@ -290,18 +309,37 @@ const notes = {
             // Setting all the other snippets that weren't clicked on (but perhaps were previously) back to their inactive states (not "highlighted" state)
             for (let i = 0; i < snippetsArray.length; i++) {
                 if (snippetsArray[i].getAttribute("id") !== snippetId) {
+
+                    //console.log(snippetsArray[i]);
+
+                    // Readding event listener to all other snippets which aren't highlighted
+                    snippetsArray[i].children[0].children[0].addEventListener("click", notes.eventListeners.editSnippet);
+
+                    // Removing get selected text eventlistener for all other snippets
+                    snippetsArray[i].children[0].children[0].removeEventListener("mouseUp", notes.eventListeners.getSelectedSnippetText);
                     
                     if (snippetsArray[i].classList.contains("compact")) {
                         snippetsArray[i].classList.remove("compact");
                     }
+
+                    // Removing codify text styling
+                    if (snippetsArray[i].children[0].classList.contains("codify-text")) {
+                        snippetsArray[i].children[0].classList.remove("codify-text");
+                    }
+
                     if (snippetsArray[i].children[0].classList.contains("yellow")) {
                         snippetsArray[i].children[0].classList.remove("yellow");
                     }
                     if (!snippetsArray[i].children[0].classList.contains("secondary")) {
                         snippetsArray[i].children[0].classList.add("secondary");
                     }
+
                     if (!snippetsArray[i].children[1].classList.contains("display-none")) {
                         snippetsArray[i].children[1].classList.add("display-none");
+                    }
+
+                    if (!snippetsArray[i].children[2].classList.contains("display-none")) {
+                        snippetsArray[i].children[2].classList.add("display-none");
                     }
                     
                     // Removes the display-none that's applied with the snippet text edit button
@@ -314,36 +352,36 @@ const notes = {
                     }
                     
                     // Hiding the save edited text button
-                    if (!snippetsArray[i].children[1].children[0].classList.contains("display-none")) {
-                        snippetsArray[i].children[1].children[0].classList.add("display-none");
+                    if (!snippetsArray[i].children[2].children[0].classList.contains("display-none")) {
+                        snippetsArray[i].children[2].children[0].classList.add("display-none");
                     }
                     
                     // Displaying all other buttons
-                    for (let j = 1; j < snippetsArray[i].children[1].children.length; j++) {
-                        if (snippetsArray[i].children[1].children[j].classList.contains("display-none")) {
-                            snippetsArray[i].children[1].children[j].classList.remove("display-none");
+                    for (let j = 1; j < snippetsArray[i].children[2].children.length; j++) {
+                        if (snippetsArray[i].children[2].children[j].classList.contains("display-none")) {
+                            snippetsArray[i].children[2].children[j].classList.remove("display-none");
                         }
                     }
                     
                     // Hiding the "move up" button for the first snippet and displaying it on all others
                     if (i === 0) {
-                        if (!snippetsArray[i].children[1].children[4].classList.contains("display-none")) {
-                            snippetsArray[i].children[1].children[4].classList.add("display-none");
+                        if (!snippetsArray[i].children[2].children[4].classList.contains("display-none")) {
+                            snippetsArray[i].children[2].children[4].classList.add("display-none");
                         }
                     } else {
-                        if (snippetsArray[i].children[1].children[4].classList.contains("display-none")) {
-                            snippetsArray[i].children[1].children[4].classList.remove("display-none");
+                        if (snippetsArray[i].children[2].children[4].classList.contains("display-none")) {
+                            snippetsArray[i].children[2].children[4].classList.remove("display-none");
                         }
                     }
                     
                     // Hiding the "move down" button for the last snippet and displaying it on all others
                     if (i === snippetsArray.length - 1) {
-                        if (!snippetsArray[i].children[1].children[3].classList.contains("display-none")) {
-                            snippetsArray[i].children[1].children[3].classList.add("display-none");
+                        if (!snippetsArray[i].children[2].children[3].classList.contains("display-none")) {
+                            snippetsArray[i].children[2].children[3].classList.add("display-none");
                         }
                     } else {
-                        if (snippetsArray[i].children[1].children[3].classList.contains("display-none")) {
-                            snippetsArray[i].children[1].children[3].classList.remove("display-none");
+                        if (snippetsArray[i].children[2].children[3].classList.contains("display-none")) {
+                            snippetsArray[i].children[2].children[3].classList.remove("display-none");
                         }
                     }
                 }
@@ -442,12 +480,16 @@ const notes = {
             
             // Hides the paragraph element of the snippet when edited
             snippetTextElement.children[0].classList.add("display-none");
+            if (!snippetTextElement.parentElement.children[1].classList.contains("display-none")) {
+                snippetTextElement.parentElement.children[1].classList.add("display-none");
+            }
+            console.log(snippetTextElement.parentElement.children);
             
             // Displays the green save snippet button
-            snippetTextElement.parentElement.children[1].children[0].classList.remove("display-none");
+            snippetTextElement.parentElement.children[2].children[0].classList.remove("display-none");
             
-            for (let i = 1; i < snippetTextElement.parentElement.children[1].children.length; i++) {
-                snippetTextElement.parentElement.children[1].children[i].classList.add("display-none");
+            for (let i = 1; i < snippetTextElement.parentElement.children[2].children.length; i++) {
+                snippetTextElement.parentElement.children[2].children[i].classList.add("display-none");
             }
             
             // console.log(snippetId);
@@ -948,6 +990,81 @@ const notes = {
                 // console.log(currentNotePos);
                 // console.log(noteToBeMovedDown);
             });
+        },
+        codifyText: function(e) {
+            console.log("clicked to codify text");
+
+            let snippetId;
+            let snippetTextContainer;
+
+            //console.log(e.path);
+            //console.log(e.target.tagName);
+            
+            if (e.target.tagName === "I") {
+                snippetId = e.path[3].getAttribute("id");
+                snippetTextContainer = e.path[3].children[0];
+            }
+            if (e.target.tagName === "BUTTON") {
+                snippetId = e.path[2].getAttribute("id");
+                snippetTextContainer = e.path[2].children[0];
+            }
+            //console.log(snippetId);
+            //console.log(snippetTextContainer);
+
+            const codeInputContainer = snippetTextContainer.parentElement.children[1];
+            //console.log(codeInputContainer);
+
+            snippetTextContainer.classList.toggle("codify-text");
+            codeInputContainer.classList.toggle("display-none");
+
+            // Adding select snippet text eventlistener
+            snippetTextContainer.addEventListener("mouseup", notes.eventListeners.getSelectedSnippetText);
+
+        },
+        getSelectedSnippetText: function(e) {
+            const selectionObj = window.getSelection();
+
+            // Getting the textfield for that particular snippet
+            let codeInputField;
+            if (e.target.tagName === "P") {
+                codeInputField = e.path[2].children[1].children[0].children[0].children[1];
+            }
+
+            //console.log(e);
+
+            //
+            if (selectionObj.anchorOffset !== selectionObj.focusOffset && codeInputField !== undefined) {
+
+                // Getting the all the text of that snippet
+                let entireText = selectionObj.baseNode.data;
+
+                // Slicing the text and creating three parts:
+
+                // 1: the text from the beginning to the start of the selection
+                let textStart = entireText.slice(0, selectionObj.anchorOffset);
+                // 2: the text within the selection
+                let textMiddle = entireText.slice(selectionObj.anchorOffset, selectionObj.focusOffset);
+                // 3: the text from the end of the selection to the end of text
+                let textEnd = entireText.slice(selectionObj.focusOffset);
+
+                //console.log(`Start text: ${textStart}`);
+                //console.log(`Selection text: ${textMiddle}`);
+                //console.log(`End text: ${textEnd}`);
+
+                tempCode.inputElement = codeInputField;
+                //tempCode.textBefore = textStart;
+                //tempCode.textSelection = textMiddle;
+                //tempCode.textAfter = textEnd;
+                tempCode.selectionStart = selectionObj.anchorOffset;
+                tempCode.selectionEnd = selectionObj.focusOffset;
+                tempCode.text = entireText;
+
+                //let htmlSelectionText = `<span class='test'>${textMiddle}</span>`;
+
+                codeInputField.value = textMiddle;
+            }
+
+
         }
     },
     "createElements": {
@@ -963,6 +1080,7 @@ const notes = {
             snippetsContainer.appendChild(uiSegments);
             
             this.createSnippetTextElements(uiSegments, snippetText);
+            this.createSnippetCodeInput(uiSegments);
             this.createSnippetButtonElements(uiSegments);
             
         },
@@ -981,6 +1099,93 @@ const notes = {
             
             // Adding an eventlistener to the snippet text element
             snippetParagraph.addEventListener("click", notes.eventListeners.editSnippet);
+        },
+        createSnippetCodeInput: function(uiSegments) {
+
+            // Creating the container for the code input field
+            const uiSecondarySegment = document.createElement("div");
+            uiSecondarySegment.classList.add("ui", "secondary", "segment", "snippet-code-input", "display-none");
+            uiSegments.appendChild(uiSecondarySegment);
+
+            this.createSnippetCodeInputForm(uiSecondarySegment);
+            this.createSnippetCodeInputControls(uiSecondarySegment);
+
+        },
+        createSnippetCodeInputForm: function(uiSecondarySegment) {
+
+            // Creating the form container
+            const uiFormContainer = document.createElement("div");
+            uiFormContainer.classList.add("ui", "form");
+            uiSecondarySegment.appendChild(uiFormContainer);
+
+            // Creating the field container
+            const uiFieldContainer = document.createElement("div");
+            uiFieldContainer.classList.add("field");
+            uiFormContainer.appendChild(uiFieldContainer);
+
+            // Creating the label for input field
+            const fieldLabel = document.createElement("label");
+            fieldLabel.innerText = "Enter code";
+            uiFieldContainer.appendChild(fieldLabel);
+
+            // Creating the textarea as the input
+            const fieldInput = document.createElement("textarea");
+            fieldInput.classList.add("ui", "field");
+            fieldInput.setAttribute("id", "code-input-textarea");
+            uiFieldContainer.appendChild(fieldInput);
+
+        },
+        createSnippetCodeInputControls: function(uiSecondarySegment) {
+            
+            //
+            const controlsContainer = document.createElement("div");
+            controlsContainer.classList.add("code-input-controls", "margin-top-tiny");
+            uiSecondarySegment.appendChild(controlsContainer);
+
+            //
+            const buttonArray = [
+                {
+                    "type": ["js", "square"],
+                    "function": notes.code.eventListeners.clickedOnJavaScript
+                },
+                {
+                    "type": ["html5"],
+                    "function": notes.code.eventListeners.clickedOnHTML
+                },
+                {
+                    "type": ["css3", "alternate"],
+                    "function": notes.code.eventListeners.clickedOnCSS
+                },
+                {
+                    "type": ["sass"]
+                },
+                {
+                    "type": ["terminal"]
+                }
+            ];
+
+            // Creating buttons from the button array
+            buttonArray.forEach(button => {
+                // Creating the button element
+                const buttonElement = document.createElement("button");
+                buttonElement.classList.add("circular", "ui", "basic", "icon", "massive", "button", "code-button");
+                controlsContainer.appendChild(buttonElement);
+
+                // Creating the button icon element
+                const buttonIconElement = document.createElement("i");
+                buttonIconElement.classList.add("icon");
+                buttonElement.appendChild(buttonIconElement);
+
+                // Adding icon type classes
+                button.type.forEach(type => {
+                    buttonIconElement.classList.add(type);
+                });
+
+                // Adding eventlisteners
+                if (button.function) {
+                    buttonElement.addEventListener("click", button.function);
+                }
+            });
         },
         createSnippetButtonElements: function(uiSegments) {
             // Creating the controls segment for buttons
@@ -1017,6 +1222,12 @@ const notes = {
                 {
                     "type": ["long", "arrow", "up", "alternate"],
                     "function": notes.eventListeners.moveSnippetUp,
+                    "display": true
+                },
+                {
+                    "type": ["code"],
+                    "function": notes.eventListeners.codifyText,
+                    "color": "black",
                     "display": true
                 }
             ];
@@ -1593,6 +1804,69 @@ const notes = {
             database.ref(`chapters/${currentChapter}/${currentNote}/tags`).once("value").then(tagsArray => {
                 notes.createElements.createTagsForEditMode(tagsArray.val());
             });
+        }
+    },
+    "code": {
+        "eventListeners": {
+            clickedOnJavaScript: function() {
+                console.log("clicked on javascript");
+                console.log(tempCode);
+            },
+            clickedOnHTML: function() {
+                console.log("clicked on HTML");
+                //console.log(tempCode);
+
+                // Getting the snippet text element from the currently highlighted snippet
+                const snippetTextElement = tempCode.inputElement.parentElement.parentElement.parentElement.parentElement.children[0].children[0];
+                //console.log(snippetTextElement);
+
+                /* const htmlOpen = `<span class='html-oneline'>`;
+                const htmlClose = `</span>`;
+
+                let snippetFormattedText = `${htmlOpen}${tempCode.textSelection}${htmlClose}`;
+
+                snippetTextElement.innerHTML = "";
+
+                //
+                let textBeforeNode = document.createTextNode(tempCode.textBefore);
+                snippetTextElement.appendChild(textBeforeNode);
+
+                //
+                let formattedElement = document.createElement("span");
+                formattedElement.classList.add("html-oneline");
+                formattedElement.innerText = tempCode.textSelection;
+                snippetTextElement.appendChild(formattedElement);
+
+                //
+                let textAfterNode = document.createTextNode(tempCode.textAfter);
+                snippetTextElement.appendChild(textAfterNode); */
+
+                //console.log(tempCode.selectionStart);
+                //console.log(tempCode.selectionEnd);
+
+                notes.code.createElements.createHTMLCodePreview();
+                
+            },
+            clickedOnCSS: function() {
+                console.log("clicked on CSS");
+                console.log(tempCode);
+            }
+        },
+        "createElements": {
+            createJavaScriptCodePreview: function() {
+
+            },
+            createHTMLCodePreview: function() {
+                //
+                let inputElement = tempCode.inputElement;
+                let snippetText = tempCode.text;
+                let selectionStart = tempCode.selectionStart;
+                let selectionEnd = tempCode.selectionEnd;
+
+                console.log(inputElement);
+                console.log(snippetText);
+                console.log(`${selectionStart} ... ${selectionEnd}`);
+            }
         }
     }
 }
